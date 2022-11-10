@@ -12,8 +12,8 @@ using namespace std;
 typedef struct State
 {
 	string name;
-	string lowState, highState;
-	bool lowOutput, highOutput;
+	vector<string> state;
+	vector<bool> output;
 }State;
 
 namespace std
@@ -38,14 +38,14 @@ namespace std
 
 typedef struct StateOutput
 {
-	string lowState, highState;
-	bool lowOutput, highOutput;
+	vector<string> state;
+	vector<bool> output;
 	
-	StateOutput(string lowState, string highState, bool lowOutput, bool highOutput) :lowState(lowState), highState(highState), lowOutput(lowOutput), highOutput(highOutput){}
-	StateOutput(const State& rhs) :lowState(rhs.lowState), highState(rhs.highState), lowOutput(rhs.lowOutput), highOutput(rhs.highOutput) {}
+	StateOutput(vector<string> state ,vector<bool> output) :state(state), output(output) {}
+	StateOutput(const State& rhs) :state(rhs.state), output(rhs.output) {}
 	bool operator ==(const StateOutput& rhs)
 	{
-		return (lowState == rhs.lowState) && (highState == rhs.highState) && (lowOutput == rhs.lowOutput) && (highOutput == rhs.highOutput);
+		return (state == rhs.state) && (output == rhs.output);
 	}
 }StateOutput;
 
@@ -134,18 +134,17 @@ int main(int argc, char* argv[])
 			ss >> crntVar;
 			ss >> nextVar;
 			ss >> output;
-			if (!states.count(crntVar)) states[crntVar] = State();
+			if (!states.count(crntVar))
+			{
+				states[crntVar] = State();
+				states[crntVar].state = vector<string>(inputNum);
+				states[crntVar].output = vector<bool>(inputNum);
+			}
 			states[crntVar].name = crntVar;
-			if (stoi(op))		//input high
-			{
-				states[crntVar].highState = nextVar;
-				states[crntVar].highOutput = output;
-			}
-			else				//input low
-			{
-				states[crntVar].lowState = nextVar;
-				states[crntVar].lowOutput = output;
-			}
+			char* pEnd;
+			int i = strtol(op.c_str(), &pEnd, 2);
+			states[crntVar].state[i] = nextVar;
+			states[crntVar].output[i] = output;
 		}
 	}
 
